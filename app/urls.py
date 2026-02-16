@@ -1,5 +1,7 @@
 """
 URL configuration for app project.
+URL configuration for app project.
+URL configuration for app project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -19,6 +21,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from app import views
+from app.services.auth.password_reset.views import redirect_mail_link
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -28,7 +31,9 @@ urlpatterns = [
     path("telegram/", include("app.services.telegram.telegram_channels.urls")),
     path("auth/", include("app.services.auth.users.urls")),
     path("account/", include("app.services.account.urls")),
-    path('pricing/', include('app.services.pricing.urls')),
+    path("ai-assistant/", include("app.services.ai.urls")),
+    path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
+    path("pricing/", include("app.services.pricing.urls")),
     path("foragencies/", include("app.services.foragencies.urls")),
     path('parser/', include('app.services.parser.urls')),
     path('regions/', include('app.services.regions.urls'), name='regions'),
