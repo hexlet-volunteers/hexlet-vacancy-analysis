@@ -35,7 +35,8 @@ urlpatterns = [
     path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
     path("pricing/", include("app.services.pricing.urls")),
     path("foragencies/", include("app.services.foragencies.urls")),
-    path("parser/", include("app.services.parser.urls")),
+    path('parser/', include('app.services.parser.urls')),
+    path('regions/', include('app.services.regions.urls'), name='regions'),
     path("vacancies/", include("app.services.vacancies.urls")),
 ]
 
