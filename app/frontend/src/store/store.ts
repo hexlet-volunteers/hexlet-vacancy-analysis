@@ -1,10 +1,20 @@
-import { configureStore } from '@reduxjs/toolkit';
-import { plansApi } from './api/plansApi';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import plansReducer from "./slices/plansSlice"
 
-export const store = configureStore({
-    reducer: {
-        [plansApi.reducerPath]: plansApi.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(plansApi.middleware),
+const rootReducer = combineReducers({
+  plans: plansReducer,
+
 });
+
+
+export const setupStore = (preloadedState?: Partial<RootState>) => {
+  return configureStore({
+    reducer: rootReducer,
+    preloadedState,
+  });
+};
+
+export type RootState = ReturnType<typeof rootReducer>;
+
+
+

@@ -4,95 +4,33 @@ import { CurrencyDollarIcon, LightBulbIcon, CheckIcon } from "@heroicons/react/2
 
 
 
-export type Plan = {
-    id: string;
-    title: string;
-    subtitle: string;
-    price: string;
-    period: string;
-    features: string[];
-    highlighted?: boolean;
-};
-
-export const plans: Plan[] = [
-    {
-        id: 'starter',
-        title: 'Базовый',
-        subtitle: 'Для начинающих специалистов',
-        price: '₽0 ',
-        period: ' /навсегда',
-        features: [
-            'Просмотр аналитики рынка',
-            'Базовые отчеты',
-            '50 запросов/месяц',
-            'Доступ к вакансиям',
-            'Email поддержка',
-        ],
-    },
-    {
-        id: 'pro',
-        title: 'Профи',
-        subtitle: 'Для активного поиска работы',
-        price: '₽29,990 ',
-        period: ' /мес',
-        features: [
-            'Все из базового',
-            'Безлимитные запросы',
-            'Расширенная аналитика',
-            'Персональные рекомендации',
-            'Тота ИИ помощник',
-            'Приоритетная поддержка',
-            'Отчеты по карьерному росту',
-        ],
-        highlighted: true,
-    },
-    {
-        id: 'enterprise',
-        title: 'Премиум',
-        subtitle: 'Для профессионалов',
-        price: '₽990',
-        period: ' /мес',
-        features: [
-            'Все из Профи',
-            'AI карьерный консультант',
-            'Индивидуальный план развития',
-            'Прогнозы зарплат',
-            'Эксклюзивные вакансии',
-            'Менторство от экспертов',
-            'Приоритет в рекомендациях',
-            'Персональный менеджер',
-        ],
-    },
-];
-
-
 interface FaqItem {
- question: string;
- answer: string;
+  question: string;
+  answer: string;
 }
 
 export const faqData: FaqItem[] = [
- {
-  question: "Можно ли отменить подписку?",
-  answer: "Да, вы можете отменить подписку в любой момент без штрафов.",
- },
- {
-  question: "Какие способы оплаты доступны?",
-  answer: "Принимаем банковские карты, СБП, PayPal и криптовалюту.",
- },
- {
-  question: "Есть ли скидки для студентов?",
-  answer: "Да! Студентам предоставляется скидка 50% на все тарифы.",
- },
- {
-  question: "Можно ли перейти на другой тариф?",
-  answer: "Конечно! Вы можете изменить тариф в любое время.",
- },
+  {
+    question: "Можно ли отменить подписку?",
+    answer: "Да, вы можете отменить подписку в любой момент без штрафов.",
+  },
+  {
+    question: "Какие способы оплаты доступны?",
+    answer: "Принимаем банковские карты, СБП, PayPal и криптовалюту.",
+  },
+  {
+    question: "Есть ли скидки для студентов?",
+    answer: "Да! Студентам предоставляется скидка 50% на все тарифы.",
+  },
+  {
+    question: "Можно ли перейти на другой тариф?",
+    answer: "Конечно! Вы можете изменить тариф в любое время.",
+  },
 ];
 
 export interface FeatureCardData {
-  id: string; 
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>; 
+  id: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   title: string;
   description: string;
 }
