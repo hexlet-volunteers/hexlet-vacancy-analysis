@@ -1,7 +1,5 @@
 import { Box, Flex, Stack } from "@mantine/core";
 import "@mantine/core/styles.css";
-import { store } from "../../../../store/store";
-import { Provider } from "react-redux";
 
 import BusinessAdvantages from "./BusinessAdvantages";
 import ContactForm from "./ContactForm";
@@ -10,7 +8,7 @@ import Header from "./Header";
 
 const AgencyPricingPage = () => {
  return (
-  <Provider store={store}>
+  <>
    <Header />
    <Box
     style={{
@@ -46,7 +44,7 @@ const AgencyPricingPage = () => {
      </Flex>
     </Stack>
    </Box>
-  </Provider>
+  </>
  );
 };
 

@@ -10,28 +10,34 @@ import {
 } from "@mantine/core";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
+type Features = {
+ name: string;
+};
+
 interface PricingCardProps {
- title: string;
- subtitle: string;
+ id: string;
+ name: string;
+ description: string;
  price: string;
+ currency: string;
  period: string;
- features: string[];
- highlighted?: boolean;
+ features: Features[];
 }
 
-const PricingCard = ({
- title,
- subtitle,
- price,
- period,
- features,
- highlighted,
-}: PricingCardProps) => {
- const cardBorderColor = highlighted ? "#4ECDC4" : "#808080";
+const PricingCard = (props: PricingCardProps) => {
+ // Предполагается, что данные о популярном тарифе приходят с бекенда, например, по ключу "highlight".
+ // Пока данных нет, используется вспомогательная функция isPopularPlan,
+ // чтобы один из тарифов отображать с бейджом "Популярный" и зеленой рамкой
 
- const buttonBackGroundColor = highlighted ? "#4ECDC4" : "#ede8e8";
+ const isPopularPlan = (name: string) => name === "Профессиональный";
 
- const buttonColor = highlighted ? "#FFFFFF" : "black";
+ const popularPlan = isPopularPlan(props.name);
+
+ const cardBorderColor = popularPlan ? "#4ECDC4" : "#808080";
+
+ const buttonBackGroundColor = popularPlan ? "#4ECDC4" : "#ede8e8";
+
+ const buttonColor = popularPlan ? "#FFFFFF" : "black";
 
  return (
   <Paper
@@ -47,7 +53,7 @@ const PricingCard = ({
     backgroundColor: "white",
    }}
   >
-   {highlighted && (
+   {popularPlan && (
     <Badge
      color="#4ECDC4"
      variant="filled"
@@ -65,17 +71,17 @@ const PricingCard = ({
    )}
    <Stack gap="md" h="100%" w="100%">
     <Title order={3} ta="center" c="dark">
-     {title}
+     {props.name}
     </Title>
     <Text ta="center" size="sm" c="dimmed">
-     {subtitle}
+     {props.description}
     </Text>
 
     <Text ta="center" size="20px" fw={700}>
      <Text span c="#4ECDC4" size="35px" fw={700}>
-      {price}
+      {`${props.currency}${props.price} `}
      </Text>
-     {period}
+     /{props.period}
     </Text>
 
     <Stack
@@ -84,13 +90,13 @@ const PricingCard = ({
      w="100%"
      style={{ flexGrow: 1, alignSelf: "stretch" }}
     >
-     {features.map((feature, index) => (
+     {props.features.map((feature, index) => (
       <Group key={index} wrap="nowrap" align="flex-start" w="100%">
        <ThemeIcon size="sm" radius="xl" color="#4ECDC4" variant="light">
         <CheckCircleIcon />
        </ThemeIcon>
        <Text size="sm" c="dark">
-        {feature}
+        {feature.name}
        </Text>
       </Group>
      ))}
