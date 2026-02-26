@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 
 @sync_to_async
 def get_search_vacancies(search_query: str = "") -> list[dict[str, str]]:
-    qs = Vacancy.objects.select_related("company", "city", "platform")
+    qs = Vacancy.objects.select_related("company", "city", "platform").order_by(
+        "-published_at"
+    )
 
     if search_query:
         terms = search_query.split()
