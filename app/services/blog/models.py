@@ -14,19 +14,12 @@ class BlogCategory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Created at"))
     updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated at"))
 
-    message_valid = _("Cannot delete category because it is in use.")
-
     class Meta:
         verbose_name = _("Blog Category")
         verbose_name_plural = _("Blog Categories")
 
     def __str__(self) -> str:
-        return f"{self.name}"
-
-    def delete(self, *args, **kwargs):
-        if not self.can_delete():
-            raise ValidationError(self.message_valid)
-        super().delete(*args, **kwargs)
+        return self.name
 
 
 class Tag(models.Model):
@@ -40,7 +33,7 @@ class Tag(models.Model):
         verbose_name_plural = _("Blog Tags")
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     def can_delete(self):
         return not self.post_tags.exists()
