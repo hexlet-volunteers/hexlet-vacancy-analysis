@@ -24,8 +24,8 @@ export const VacancyCard: React.FC<VacancyCardPropsWrapper> = ({ props }) => {
   const displayedSkills = skillsExpanded ? (skills_array || []) : (skills_array ? skills_array.slice(0, 3) : []);
 
   const handleCardLink = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.get(`/vacancies/${id}`);
+    e.stopPropagation();
+    window.open(url, '_blank');
   };
 
   const handleButtonLink = (e: React.MouseEvent) => {
