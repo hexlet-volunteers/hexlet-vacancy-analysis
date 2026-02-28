@@ -5,7 +5,7 @@ from app.services.vacancies.utils.http_client import HTTPClient
 logger = logging.getLogger(__name__)
 
 
-async def fetch_hh_vacancies(params):
+async def fetch_hh_vacancies(params: dict | None = None):
     base_url = "https://api.hh.ru/vacancies"
     headers = {"User-Agent": "HH-User-Agent"}
     api_client = HTTPClient(base_url, headers)

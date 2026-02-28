@@ -1,4 +1,3 @@
-import { router } from "@inertiajs/core";
 import { Badge, Box, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { Building2, ChevronDown, ChevronUp, MapPin, Send } from "lucide-react";
 import React, { useState } from "react";
@@ -10,7 +9,7 @@ interface VacancyCardPropsWrapper {
 
 export const VacancyCard: React.FC<VacancyCardPropsWrapper> = ({ props }) => {
 
-  const { id, title, url, salary, employment, company, city, skills } = props;
+  const { title, url, salary, employment, company, city, skills } = props;
 
   const [skillsExpanded, setSkillsExpanded] = useState(false);
 
@@ -24,8 +23,8 @@ export const VacancyCard: React.FC<VacancyCardPropsWrapper> = ({ props }) => {
   const displayedSkills = skillsExpanded ? (skills_array || []) : (skills_array ? skills_array.slice(0, 3) : []);
 
   const handleCardLink = (e: React.MouseEvent) => {
-    e.preventDefault();
-    router.get(`/vacancies/${id}`);
+    e.stopPropagation();
+    window.open(url, '_blank');
   };
 
   const handleButtonLink = (e: React.MouseEvent) => {

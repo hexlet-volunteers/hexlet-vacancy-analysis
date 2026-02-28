@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Optional
 
 from bs4 import BeautifulSoup
@@ -6,6 +7,15 @@ from bs4 import BeautifulSoup
 from app.services.vacancies.models import City, Company, Platform
 
 logger = logging.getLogger(__name__)
+
+CURRENCY_PATTERN = re.compile(r"^(rub|rur)$", re.IGNORECASE)
+
+
+def normalize_currency(currency: str) -> str:
+    """Нормализует валюту к формату RUB (rub/rur -> RUB)."""
+    if CURRENCY_PATTERN.match(currency):
+        return "RUB"
+    return currency
 
 
 def format_salary(salary_data: Optional[dict[str, any]]) -> str:
@@ -16,23 +26,30 @@ def format_salary(salary_data: Optional[dict[str, any]]) -> str:
     salary_from = salary_data.get("from")
     salary_to = salary_data.get("to")
 
-    if not salary_from and not salary_to:
+    def get_valid_salary_value(value) -> None | int:
+        if value is None:
+            return None
+        try:
+            if int(value) > 0:
+                return value
+            else:
+                return None
+        except ValueError:
+            logger.info("Salary value not a number")
+            return None
+
+    valid_from = get_valid_salary_value(salary_from)
+    valid_to = get_valid_salary_value(salary_to)
+
+    if not valid_from and not valid_to:
         return "По договоренности"
 
-    if salary_from:
-        try:
-            int(salary_from)
-            parts.append(f"от {salary_from}")
-        except ValueError:
-            logger.info("Salary from not a number")
-    if salary_to:
-        try:
-            int(salary_to)
-            parts.append(f"до {salary_to}")
-        except ValueError:
-            logger.warning("Salary to not a number")
+    if valid_from:
+        parts.append(f"от {valid_from}")
+    if valid_to:
+        parts.append(f"до {valid_to}")
     if salary_data.get("currency"):
-        parts.append(salary_data["currency"])
+        parts.append(normalize_currency(salary_data["currency"]))
 
     return " ".join(parts)
 
