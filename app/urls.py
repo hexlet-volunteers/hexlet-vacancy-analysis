@@ -1,5 +1,6 @@
 """
 URL configuration for app project.
+URL configuration for app project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -16,10 +17,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from app import views
 from app.services.auth.password_reset.views import redirect_mail_link
+
+from .infrastructure.sitemap_loader import get_sitemaps
 
 urlpatterns = [
     path("", include("app.homepage.urls")),
@@ -32,6 +36,12 @@ urlpatterns = [
     path("ai-assistant/", include("app.services.ai.urls")),
     path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
     path("pricing/", include("app.services.pricing.urls")),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": get_sitemaps()},
+        name="sitemap",
+    ),
     path("foragencies/", include("app.services.foragencies.urls")),
     path("parser/", include("app.services.parser.urls")),
     path("vacancies/", include("app.services.vacancies.urls")),

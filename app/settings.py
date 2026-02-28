@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_vite",
+    "django.contrib.sitemaps",
     "inertia",
     "app.services.hh.hh_parser",
     "app.services.telegram.telegram_parser",
