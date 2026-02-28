@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 async def process_vacancies(
-    fetch_vacancies, transform_data, params: dict[str, any]
+    fetch_vacancies, transform_data, params: dict[str, any] | None = None
 ) -> JsonResponse:
     try:
         vacancies = await fetch_vacancies(params)
