@@ -21,6 +21,7 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 
 from app import views
+from app.services.auth.password_reset.views import redirect_mail_link
 
 from .sitemap import StaticSitemap, TelegramSitemap
 
@@ -30,21 +31,26 @@ sitemaps = {
 }
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", include("app.homepage.urls")),
     path("admin/", admin.site.urls),
     path("hh/", include("app.services.hh.hh_parser.urls")),
     path("superjob/", include("app.services.superjob.superjob_parser.urls")),
     path("telegram/", include("app.services.telegram.telegram_channels.urls")),
     path("auth/", include("app.services.auth.users.urls")),
     path("account/", include("app.services.account.urls")),
+    path("ai-assistant/", include("app.services.ai.urls")),
+    path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
+    path("pricing/", include("app.services.pricing.urls")),
     path(
         "sitemap.xml",
         sitemap,
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
-    path("pricing/", include("app.services.pricing.urls")),
     path("foragencies/", include("app.services.foragencies.urls")),
+    path("parser/", include("app.services.parser.urls")),
+    path("vacancies/", include("app.services.vacancies.urls")),
+    path("blog/", include("app.services.blog.urls")),
 ]
 
 handler500 = views.custom_server_error
