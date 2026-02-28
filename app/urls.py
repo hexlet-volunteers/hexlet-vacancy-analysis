@@ -23,12 +23,7 @@ from django.urls import include, path
 from app import views
 from app.services.auth.password_reset.views import redirect_mail_link
 
-from .sitemap import StaticSitemap, TelegramSitemap
-
-sitemaps = {
-    "static": StaticSitemap,
-    "telegram": TelegramSitemap,
-}
+from .infrastructure.sitemap_loader import get_sitemaps
 
 urlpatterns = [
     path("", include("app.homepage.urls")),
@@ -44,8 +39,8 @@ urlpatterns = [
     path(
         "sitemap.xml",
         sitemap,
-        {"sitemaps": sitemaps},
-        name="django.contrib.sitemaps.views.sitemap",
+        {"sitemaps": get_sitemaps()},
+        name="sitemap",
     ),
     path("foragencies/", include("app.services.foragencies.urls")),
     path("parser/", include("app.services.parser.urls")),
