@@ -1,4 +1,3 @@
-import { router } from "@inertiajs/core";
 import { Badge, Box, Button, Card, Group, Stack, Text } from '@mantine/core';
 import { Building2, ChevronDown, ChevronUp, MapPin, Send } from "lucide-react";
 import React, { useState } from "react";
