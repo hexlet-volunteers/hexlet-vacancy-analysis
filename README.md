@@ -9,7 +9,8 @@ To run this project, you need to have the following software installed:
 - Python >=3.12
 - Uv
 - PostgreSQL
-
+- npm
+___
 ## Preparation:
 
 Create .env file with code kind of:
@@ -44,7 +45,7 @@ TINKOFF_ID_REDIRECT_URI="https://localhost/callback"
 SUPERJOB_API_KEY=your_key_here
 ```
 Create a PostgreSQL user (or reuse an existing one) and a database using the parameters from DATABASE_URL.
-
+___
 ## Installation:
 
 To set up the project, navigate to the project directory and run the following commands:
@@ -60,9 +61,21 @@ make migrate
 ```bash
 make create-superuser
 ```
-
+___
 ## Local run:
 
+There are two ways to run a project locally:
+
+### 1. With Docker:
+First you need to install [Docker](https://docs.docker.com/get-started/get-docker/)
+
+Then just
+
+```bash
+make docker-up
+```
+
+### 2. Without docker:
 Terminal 1:
 
 ```bash
@@ -75,23 +88,9 @@ Terminal 2:
 make start-frontend
 ```
 
-## запуск через docker:
+In both cases project is available on http://localhost:8000/
 
-### для работы проекта необходимы:
-
-- [Docker](https://docs.docker.com/get-started/get-docker/)
-
----
-
-- запускаем проект
-
-```
-make docker-up
-```
-
-- проект становится доступен по ссылке - http://localhost:8000/
-
-.
+___
 
 ## Parser:
 To parse hh.ru or superjob.ru you need to create a local database and go to /parser/hh 
