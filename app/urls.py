@@ -22,6 +22,7 @@ from django.urls import include, path
 
 from app import views
 from app.services.auth.password_reset.views import redirect_mail_link
+from app.services.newsletter.views import NewsletterSubscribeView
 
 from .infrastructure.sitemap_loader import get_sitemaps
 
@@ -36,6 +37,12 @@ urlpatterns = [
     path("ai-assistant/", include("app.services.ai.urls")),
     path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
     path("pricing/", include("app.services.pricing.urls")),
+    path("newsletter/", include("app.services.newsletter.urls")),
+    path(
+        "api/subscribe",
+        NewsletterSubscribeView.as_view(),
+        name="newsletter_subscribe_legacy",
+    ),
     path(
         "sitemap.xml",
         sitemap,
