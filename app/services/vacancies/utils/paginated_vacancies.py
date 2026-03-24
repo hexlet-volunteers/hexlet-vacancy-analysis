@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 def get_search_vacancies(search_query: str = "") -> list[dict[str, str]]:
     qs = Vacancy.objects.\
         select_related("company", "city", "platform").\
-        prefetch_related("skills")
+        prefetch_related("skills").\
+        .order_by("-published_at")
 
     if search_query:
         terms = search_query.split()
@@ -88,7 +89,7 @@ def paginate(vacancies, page_number):
 async def get_paginated_vacancies(request):
     page_number = int(request.GET.get("page", 1))
     search_query = request.GET.get("search", "").strip()
-    vacancies = await get_search_vacancies(search_query)
+    vacancies = await get_searched_vacancies(search_query)
     (vacancies, paginator, page_obj) = paginate(vacancies, page_number)
 
     if page_obj.number == paginator.num_pages:
@@ -97,10 +98,12 @@ async def get_paginated_vacancies(request):
         for response in responses:
             if response.status_code == 200:
                 """Refetch paginated vacancies with new data"""
-                vacancies = await get_search_vacancies(search_query)
+                vacancies = await get_searched_vacancies(search_query)
                 (_, paginator, page_obj) = paginate(vacancies, page_number)
             else:
-                logger.error(f"Fetch error, status code: {response.status_code}")
+                logger.error(
+                    f"Fetch error, status code: {response.status_code}"
+                )
 
     return {
         "pagination": {

@@ -1,5 +1,6 @@
 import logging
-from typing import Optional
+import re
+from typing import Any, Optional
 
 from bs4 import BeautifulSoup
 
@@ -7,8 +8,17 @@ from app.services.vacancies.models import City, Company, Platform
 
 logger = logging.getLogger(__name__)
 
+CURRENCY_PATTERN = re.compile(r"^(rub|rur)$", re.IGNORECASE)
 
-def format_salary(salary_data: Optional[dict[str, any]]) -> str:
+
+def normalize_currency(currency: str) -> str:
+    """Нормализует валюту к формату RUB (rub/rur -> RUB)."""
+    if CURRENCY_PATTERN.match(currency):
+        return "RUB"
+    return currency
+
+
+def format_salary(salary_data: Optional[dict[str, Any]]) -> str:
     if not salary_data:
         return "По договоренности"
 
@@ -16,23 +26,30 @@ def format_salary(salary_data: Optional[dict[str, any]]) -> str:
     salary_from = salary_data.get("from")
     salary_to = salary_data.get("to")
 
-    if not salary_from and not salary_to:
+    def get_valid_salary_value(value) -> None | int | str:
+        if value is None:
+            return None
+        try:
+            if int(value) > 0:
+                return value
+            else:
+                return None
+        except ValueError:
+            logger.info("Salary value not a number")
+            return None
+
+    valid_from = get_valid_salary_value(salary_from)
+    valid_to = get_valid_salary_value(salary_to)
+
+    if not valid_from and not valid_to:
         return "По договоренности"
 
-    if salary_from:
-        try:
-            int(salary_from)
-            parts.append(f"от {salary_from}")
-        except ValueError:
-            logger.info("Salary from not a number")
-    if salary_to:
-        try:
-            int(salary_to)
-            parts.append(f"до {salary_to}")
-        except ValueError:
-            logger.warning("Salary to not a number")
+    if valid_from:
+        parts.append(f"от {valid_from}")
+    if valid_to:
+        parts.append(f"до {valid_to}")
     if salary_data.get("currency"):
-        parts.append(salary_data["currency"])
+        parts.append(normalize_currency(salary_data["currency"]))
 
     return " ".join(parts)
 
@@ -47,7 +64,7 @@ def extract_plain_text(html_content: Optional[str]) -> str:
     return BeautifulSoup(html_content, "html.parser").get_text()
 
 
-def safe_nested_get(data: Optional[dict[str, any]], *keys: str) -> any:
+def safe_nested_get(data: Optional[dict[str, Any]], *keys: str) -> Any:
     if not data:
         return None
 
@@ -62,7 +79,7 @@ def safe_nested_get(data: Optional[dict[str, any]], *keys: str) -> any:
     return current
 
 
-def transform_hh_data(item: dict[str, any]) -> dict[str, any]:
+def transform_hh_data(item: dict[str, Any]) -> dict[str, Any]:
     platform, _ = Platform.objects.get_or_create(name=Platform.HH)
     company = extract_company(item)
     city, full_address = extract_city_and_address(item.get("address"))
@@ -89,7 +106,7 @@ def transform_hh_data(item: dict[str, any]) -> dict[str, any]:
     }
 
 
-def extract_company(item: dict[str, any]) -> Optional[Company]:
+def extract_company(item: dict[str, Any]) -> Optional[Company]:
     employer_name = item.get("employer", {}).get("name")
     if not employer_name:
         return None
@@ -98,7 +115,7 @@ def extract_company(item: dict[str, any]) -> Optional[Company]:
 
 
 def extract_city_and_address(
-    address: Optional[dict[str, any]],
+    address: Optional[dict[str, Any]],
 ) -> tuple[Optional[City], Optional[str]]:
     if not address:
         return None, None

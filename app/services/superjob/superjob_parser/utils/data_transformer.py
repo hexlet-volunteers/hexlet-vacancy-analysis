@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from django.utils.timezone import make_aware
 
@@ -11,7 +11,7 @@ from app.services.hh.hh_parser.utils.data_transformer import (
 from app.services.vacancies.models import City, Company, Platform
 
 
-def transform_superjob_data(item: dict[str, any]) -> dict[str, any]:
+def transform_superjob_data(item: dict[str, Any]) -> dict[str, Any]:
     platform, _ = Platform.objects.get_or_create(name=Platform.SUPER_JOB)
     company = extract_company(item)
     city = extract_city(item.get("town"))
@@ -43,7 +43,7 @@ def transform_superjob_data(item: dict[str, any]) -> dict[str, any]:
     }
 
 
-def extract_company(item: dict[str, any]) -> Optional[Company]:
+def extract_company(item: dict[str, Any]) -> Optional[Company]:
     company_data = item.get("client", {})
     company_name = company_data.get("title")
     if not company_name:
@@ -52,7 +52,7 @@ def extract_company(item: dict[str, any]) -> Optional[Company]:
     return company
 
 
-def extract_city(town_data: Optional[dict[str, any]]) -> Optional[City]:
+def extract_city(town_data: Optional[dict[str, Any]]) -> Optional[City]:
     if not town_data:
         return None
     city_name = town_data.get("title")
@@ -62,7 +62,7 @@ def extract_city(town_data: Optional[dict[str, any]]) -> Optional[City]:
     return city
 
 
-def format_skills(skills_data: Optional[any]) -> Optional[str]:
+def format_skills(skills_data: Optional[Any]) -> Optional[str]:
     if not skills_data:
         return None
     if isinstance(skills_data, str):

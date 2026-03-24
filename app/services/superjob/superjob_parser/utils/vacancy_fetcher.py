@@ -9,10 +9,10 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-async def fetch_superjob_vacancies(params):
-    secret_key = os.getenv("SUPERJOB_KEY")
+async def fetch_superjob_vacancies(params: dict | None = None):
+    secret_key = os.getenv("SUPERJOB_API_KEY")
     if not secret_key:
-        raise ValueError("SUPERJOB_KEY environment variable is not set")
+        raise ValueError("SUPERJOB_API_KEY environment variable is not set")
     base_url = "https://api.superjob.ru/2.0/vacancies"
     headers = {"X-Api-App-Id": secret_key}
     api_client = HTTPClient(base_url, headers)
@@ -21,9 +21,10 @@ async def fetch_superjob_vacancies(params):
     responses = await api_client.get(urls=urls, params=params)
 
     vacancies = [
-        response.get("objects")
+        vacancy
         for response in responses
         if not isinstance(response, Exception)
+        for vacancy in response.get("objects", [])
     ]
     if not vacancies:
         logger.warning("No vacancy found in superjob api")

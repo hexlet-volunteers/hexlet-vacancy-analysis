@@ -36,6 +36,7 @@ dev = [
     "pytest-cov>=6.2.1",
     "pytest-django>=4.11.1",
     "ruff>=0.12.1",
+    "factory-boy>=3.3.3",
 ]
 
 [tool.pylint.main]

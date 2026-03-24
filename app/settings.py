@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import sys
 from dotenv import load_dotenv
 from pathlib import Path
 import dj_database_url
@@ -253,3 +254,50 @@ AI_API_TIMEOUT = os.getenv("AI_API_TIMEOUT", 10)
 AI_API_MODEL = os.getenv("AI_API_MODEL", "")
 
 CHAT_MAX_HISTORY_LENGTH = os.getenv("CHAT_MAX_HISTORY_LENGTH", 10)
+
+# Logging
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "format": "[{asctime}] {levelname} {name}:{lineno} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "formatter": "default",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+
+        "django.db.backends": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "WARNING",
+        },
+
+        "app": {
+            "handlers": ["console"],
+            "level": "DEBUG" if DEBUG else "INFO",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+}

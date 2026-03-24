@@ -1,4 +1,5 @@
 import logging
+from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.http import JsonResponse
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 async def process_vacancies(
-    fetch_vacancies, transform_data, params: dict[str, any]
+    fetch_vacancies, transform_data, params: dict[str, Any] | None = None
 ) -> JsonResponse:
     try:
         vacancies = await fetch_vacancies(params)
