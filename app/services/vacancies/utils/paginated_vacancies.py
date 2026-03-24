@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 
 @sync_to_async
 def get_search_vacancies(search_query: str = "") -> list[dict[str, str]]:
-    qs = Vacancy.objects.select_related("company", "city", "platform")
+    qs = Vacancy.objects.\
+        select_related("company", "city", "platform").\
+        prefetch_related("skills")
 
     if search_query:
         terms = search_query.split()
@@ -41,7 +43,7 @@ def get_search_vacancies(search_query: str = "") -> list[dict[str, str]]:
             "company": v.company.name if v.company else "",
             "city": v.city.name if v.city else "",
             "url": v.url,
-            "skills": v.skills,
+            "skills": list(v.skills.values_list("name", flat=True)),
             "experience": v.experience,
             "employment": v.employment,
             "work_format": v.work_format,

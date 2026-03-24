@@ -78,6 +78,7 @@ def transform_hh_data(item: dict[str, any]) -> dict[str, any]:
         "experience": safe_nested_get(item, "experience", "name"),
         "schedule": safe_nested_get(item, "schedule", "name"),
         "work_format": format_list(item.get("work_format", []), "name"),
+        # TODO Нормализовать здесь скиллы под таблицу Skills
         "skills": format_list(item.get("key_skills", []), "name"),
         "education": safe_nested_get(item, "education", "level", "name"),
         "description": extract_plain_text(item.get("description")),
