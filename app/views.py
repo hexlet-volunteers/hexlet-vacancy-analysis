@@ -9,5 +9,5 @@ def custom_server_error(request):
 
 def custom_not_found_error(request, exception):
     return JsonResponse(
-        {"status": "error", "message": "Internal server error"}, status=404
+        {"status": "error", "message": "Not found"}, status=404
     )
