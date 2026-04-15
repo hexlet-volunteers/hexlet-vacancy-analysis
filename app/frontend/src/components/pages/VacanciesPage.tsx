@@ -1,9 +1,20 @@
 import { router } from '@inertiajs/react';
-import { Box, Button, CloseButton, Container, Group, Pagination, Text, TextInput, Title } from '@mantine/core';
+import {
+  Box,
+  Button,
+  CloseButton,
+  Container,
+  Group,
+  Pagination,
+  Text,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { Search } from 'lucide-react';
 import type { VacancyCardProps } from '../../types';
 import { VacancyCard } from '../shared/VacancyCard';
+import { SearchBar } from '../shared/SearchBar';
 
 type PaginationMeta = {
   total_pages: number;
@@ -17,30 +28,38 @@ type VacancyPageProps = {
 
 function VacanciesPage({ vacancies, pagination }: VacancyPageProps) {
   const form = useForm({
-    mode: "uncontrolled",
+    mode: 'uncontrolled',
     initialValues: {
-      search: "",
+      search: '',
       termsOfService: false,
     },
     onValuesChange: (value) => {
       if (!value.search) {
-        handleSearch()
+        handleSearch();
       }
-    }
+    },
   });
 
   const handlePageChange = (pageNumber: number) => {
-    router.get('', { search: form.getValues().search, page: pageNumber }, { preserveState: true, replace: true });
-  }
+    router.get(
+      '',
+      { search: form.getValues().search, page: pageNumber },
+      { preserveState: true, replace: true },
+    );
+  };
 
   function handleSearch() {
-    router.get('', { search: form.getValues().search, page: 1 }, {
-      preserveState: true,
-      replace: true,
-    });
+    router.get(
+      '',
+      { search: form.getValues().search, page: 1 },
+      {
+        preserveState: true,
+        replace: true,
+      },
+    );
   }
 
-  if (!vacancies) return "Loading..."
+  if (!vacancies) return 'Loading...';
 
   return (
     <Container>
@@ -48,22 +67,21 @@ function VacanciesPage({ vacancies, pagination }: VacancyPageProps) {
       <Text size="sm" c="dimmed">
         Найдите работу мечты среди тысяч IT-вакансий
       </Text>
-
-      <form onSubmit={form.onSubmit(handleSearch)}>
-        <Group mb={20} mt="xs" justify="space-between">
-          <Box w="80%">
-            <TextInput
-              {...form.getInputProps('search')}
-              radius="md"
-              size="md"
-              placeholder="Должность, технология или компания…"
-              rightSection={<CloseButton onClick={form.reset} />}
-              key={form.key('search')}
-            />
-          </Box>
-          <Button type="submit" leftSection={<Search />} >Искать</Button>
-        </Group>
-      </form>
+      <SearchBar
+        value={form.values.search}
+        placeholder="Должность, технология или компания…"
+        onChange={(value) => form.setFieldValue('search', value)}
+        onSubmit={(value) => {
+          router.get(
+            '',
+            { search: value, page: 1 },
+            {
+              preserveState: true,
+              replace: true,
+            },
+          );
+        }}
+      />
 
       {vacancies.map((vacancy) => (
         <VacancyCard key={vacancy.id} props={vacancy} />
@@ -75,7 +93,6 @@ function VacanciesPage({ vacancies, pagination }: VacancyPageProps) {
         onChange={handlePageChange}
         mt="sm"
       />
-
     </Container>
   );
 }
