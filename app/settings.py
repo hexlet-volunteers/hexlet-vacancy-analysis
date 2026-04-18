@@ -227,6 +227,14 @@ INERTIA_LAYOUT = BASE_DIR / "app" / "templates" / "index.html"
 CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN"
 CSRF_COOKIE_NAME = "XSRF-TOKEN"
 
+# Trusted sources (scheme + host) for CSRF checks on cross-domain requests
+raw_csrf_trusted_origins = os.getenv("CSRF_TRUSTED_ORIGINS", "")
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in raw_csrf_trusted_origins.split(",")
+    if origin.strip()
+]
+
 # Password reset
 EMAIL_FOR_PASSWORD_RESET = os.environ.get("EMAIL_FOR_PASSWORD_RESET", "")
 PASSWORD_RESET_TIMEOUT = os.environ.get("PASSWORD_RESET_TIMEOUT", 3600)
