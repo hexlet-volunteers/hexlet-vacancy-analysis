@@ -19,10 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 @sync_to_async
-def get_searched_vacancies(search_query: str = "") -> list[dict[str, str]]:
-    qs = Vacancy.objects.select_related("company", "city", "platform").order_by(
-        "-published_at"
-    )
+def get_search_vacancies(search_query: str = "") -> list[dict[str, str]]:
+    qs = Vacancy.objects.\
+        select_related("company", "city", "platform").\
+        prefetch_related("skills").\
+        .order_by("-published_at")
 
     if search_query:
         terms = search_query.split()
@@ -44,7 +45,7 @@ def get_searched_vacancies(search_query: str = "") -> list[dict[str, str]]:
             "region": v.region,
             "city": v.city.name if v.city else "",
             "url": v.url,
-            "skills": v.skills,
+            "skills": list(v.skills.values_list("name", flat=True)),
             "experience": v.experience,
             "employment": v.employment,
             "work_format": v.work_format,

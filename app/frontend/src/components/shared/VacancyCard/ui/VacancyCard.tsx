@@ -13,7 +13,7 @@ export const VacancyCard: React.FC<VacancyCardPropsWrapper> = ({ props }) => {
 
   const [skillsExpanded, setSkillsExpanded] = useState(false);
 
-  const skills_array: string[] = skills ? skills.split(',') : []
+  const skills_array: string[] = skills ?? [];
 
   const skillsCutDesktop = skills_array ? skills_array.slice(0, 12) : [];
 

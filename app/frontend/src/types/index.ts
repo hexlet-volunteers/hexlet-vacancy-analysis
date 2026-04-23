@@ -14,6 +14,6 @@ export interface VacancyCardProps {
   employment?: string;
   company?: string;
   city?: string;
-  skills?: string;
+  skills?: string[];
   address?: string;
 }

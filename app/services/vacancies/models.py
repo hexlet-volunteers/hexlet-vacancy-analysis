@@ -61,6 +61,21 @@ class City(models.Model):
         return self.name
 
 
+class Skill(models.Model):
+    name = models.CharField(
+        max_length=50,
+        verbose_name="Навык",
+    )
+
+    class Meta:
+        verbose_name = "Навык"
+        verbose_name_plural = "Навыки"
+        ordering = ["name"]
+
+    def __str__(self) -> str:
+        return self.name
+
+
 class Vacancy(models.Model):
     platform = models.ForeignKey(
         Platform,
@@ -134,7 +149,9 @@ class Vacancy(models.Model):
         null=True,
         verbose_name="Адрес",
     )
-    skills = models.TextField(
+    skills = models.ManyToManyField(
+        Skill,
+        related_name="vacancies",
         null=True,
         verbose_name="Навыки",
     )
