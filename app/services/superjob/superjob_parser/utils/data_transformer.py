@@ -10,11 +10,14 @@ from app.services.hh.hh_parser.utils.data_transformer import (
 )
 from app.services.vacancies.models import City, Company, Platform
 
+from .regions_parser import get_sj_city_to_region_mapping
+
 
 def transform_superjob_data(item: dict[str, Any]) -> dict[str, Any]:
     platform, _ = Platform.objects.get_or_create(name=Platform.SUPER_JOB)
     company = extract_company(item)
     city = extract_city(item.get("town"))
+    region = get_sj_city_to_region_mapping(source="superjob")
     salary = format_salary(
         {
             "from": item.get("payment_from"),
@@ -25,6 +28,7 @@ def transform_superjob_data(item: dict[str, Any]) -> dict[str, Any]:
     return {
         "platform": platform,
         "company": company,
+        "region": region.get(str(city), 'Регион не найден'),
         "city": city,
         "platform_vacancy_id": f"{Platform.SUPER_JOB}{item.get('id')}",
         "title": item.get("profession"),
@@ -74,3 +78,4 @@ def parse_published_at(timestamp: Optional[int]) -> Optional[datetime]:
     if not timestamp:
         return None
     return make_aware(datetime.fromtimestamp(timestamp))
+

@@ -77,6 +77,11 @@ class Vacancy(models.Model):
         db_index=True,
         verbose_name="Компания",
     )
+    region = models.CharField(
+        max_length=100,
+        null=True,
+        verbose_name='Регион',
+    )
     city = models.ForeignKey(
         City,
         related_name="vacancies",

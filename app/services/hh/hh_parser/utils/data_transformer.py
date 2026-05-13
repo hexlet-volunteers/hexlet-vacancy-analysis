@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 
 from app.services.vacancies.models import City, Company, Platform
 
+from .regions_parser import get_hh_city_to_region_mapping
+
 logger = logging.getLogger(__name__)
 
 CURRENCY_PATTERN = re.compile(r"^(rub|rur)$", re.IGNORECASE)
@@ -82,11 +84,14 @@ def safe_nested_get(data: Optional[dict[str, Any]], *keys: str) -> Any:
 def transform_hh_data(item: dict[str, Any]) -> dict[str, Any]:
     platform, _ = Platform.objects.get_or_create(name=Platform.HH)
     company = extract_company(item)
-    city, full_address = extract_city_and_address(item.get("address"))
+    city = extract_city(item)
+    full_address = extract_address(item)
+    region = get_hh_city_to_region_mapping(source="hh")
 
     return {
         "platform": platform,
         "company": company,
+        "region": region.get(str(city), 'Регион не найден'),
         "city": city,
         "platform_vacancy_id": f"{Platform.HH}{item.get('id')}",
         "title": item.get("name"),
@@ -113,15 +118,16 @@ def extract_company(item: dict[str, Any]) -> Optional[Company]:
     return company
 
 
-def extract_city_and_address(
-    address: Optional[dict[str, Any]],
-) -> tuple[Optional[City], Optional[str]]:
+def extract_city(item: dict[str, Any]) -> Optional[City]:
+    city_name = item.get("area", {}).get("name")
+    if not city_name:
+        return None
+    city, _ = City.objects.get_or_create(name=city_name)
+    return city
+
+
+def extract_address(item: Optional[dict[str, Any]]) -> Optional[str]:
+    address = item.get("address", {})
     if not address:
-        return None, None
-
-    city_name = address.get("city")
-    city = None
-    if city_name:
-        city, _ = City.objects.get_or_create(name=city_name)
-
-    return city, address.get("raw")
+        return None
+    return address.get("raw")

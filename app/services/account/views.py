@@ -164,6 +164,7 @@ class ProfileEditView(View):
         last_name = (request.POST.get("last_name") or "").strip()
         phone_raw = (request.POST.get("phone") or "").strip()
 
+        normalized = None
         errors, normalized = self._validate_input(
             request, user, first_name, last_name, phone_raw
         )
@@ -175,15 +176,9 @@ class ProfileEditView(View):
         user.first_name = first_name
         user.last_name = last_name
         updates = ["first_name", "last_name"]
-        if phone_raw:
-            # normalized already computed if phone_raw not empty and no errors
-            try:
-                normalized
-            except NameError:
-                normalized = None
-            if normalized:
-                user.phone = normalized.number
-                updates.append("phone")
+        if phone_raw and normalized is not None:
+            user.phone = normalized.number
+            updates.append("phone")
         user.save(update_fields=updates)
 
         if self._wants_json(request):

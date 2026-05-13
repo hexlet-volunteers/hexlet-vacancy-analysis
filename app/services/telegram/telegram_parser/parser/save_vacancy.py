@@ -4,6 +4,7 @@ import uuid
 
 from asgiref.sync import sync_to_async
 
+from app.services.hh.hh_parser.utils.regions_parser import get_city_to_region_mapping
 from app.services.vacancies.models import City, Company, Platform, Vacancy
 
 logger = logging.getLogger(__name__)
@@ -12,13 +13,14 @@ logger = logging.getLogger(__name__)
 class SaveDataVacancy:
     @sync_to_async
     def save_vacancy(self, parsed, date):
-        city, company = None, None
+        region, city, company = None, None, None
 
         platform, _ = Platform.objects.get_or_create(name=Platform.TELEGRAM)
         if parsed["company"]:
             company, _ = Company.objects.get_or_create(name=parsed["company"])
         if parsed["city"]:
             city, _ = City.objects.get_or_create(name=parsed["city"])
+            region = get_city_to_region_mapping(source="hh")
 
         platform_vacancy_id = f"{Platform.TELEGRAM}{uuid.uuid4()}"
 
@@ -26,6 +28,7 @@ class SaveDataVacancy:
             platform_vacancy_id=platform_vacancy_id,
             defaults={
                 "platform": platform,
+                "region": region.get(city, 'Регион не найден'),
                 "city": city,
                 "company": company,
                 "platform_vacancy_id": platform_vacancy_id,

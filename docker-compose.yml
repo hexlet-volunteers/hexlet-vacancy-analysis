@@ -4,11 +4,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      DATABASE_NAME: postgres
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
+      POSTGRES_USER: ${DATABASE_USER:-postgres}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      POSTGRES_DB: ${DATABASE_NAME:-postgres}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   backend:
     build: .
@@ -18,18 +24,36 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
-      - frontend
+      db:
+        condition: service_started
+      frontend:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
     environment:
       DATABASE_HOST: db
-      DATABASE_NAME: postgres
-      DATABASE_USERNAME: postgres
-      DATABASE_PASSWORD: postgres
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_NAME: ${DATABASE_NAME:-postgres}
 
   frontend:
     build: ./app/frontend
     ports:
       - "5173:5173"
+
+  migrate:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: ${DATABASE_USER:-postgres}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-postgres}
+      DATABASE_NAME: ${DATABASE_NAME:-postgres}
+    command: uv run python manage.py migrate --noinput
 
 volumes:
   postgres_data:

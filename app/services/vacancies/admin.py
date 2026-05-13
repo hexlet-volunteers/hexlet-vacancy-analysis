@@ -8,6 +8,7 @@ class VacancyAdmin(admin.ModelAdmin):
     list_display = (
         "title",
         "company",
+        "region",
         "city",
         "salary",
         "experience",
@@ -23,6 +24,7 @@ class VacancyAdmin(admin.ModelAdmin):
     )
     list_filter = (
         "platform",
+        "region",
         "city",
         "experience",
         "schedule",
@@ -33,6 +35,7 @@ class VacancyAdmin(admin.ModelAdmin):
         "platform",
         "title",
         "company",
+        "region",
         "city",
         "address",
         "url",
@@ -66,7 +69,9 @@ class VacancyAdmin(admin.ModelAdmin):
                 )
             },
         ),
-        ("Location", {"fields": ("city", "address"), "classes": ("collapse",)}),
+        ("Location", {"fields": (
+            "region", "city", "address"),
+            "classes": ("collapse",)}),
         (
             "Additional information",
             {
