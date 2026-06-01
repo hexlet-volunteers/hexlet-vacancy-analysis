@@ -12,6 +12,11 @@ async def fetch_hh_vacancies(params: dict | None = None):
     urls = [base_url]
 
     responses = await api_client.get(urls=urls, params=params)
+    
+    if isinstance(responses[0], Exception):
+        logger.error(f"Failed to fetch vacancies list: {responses[0]}")
+        raise ValueError("Vacancy not found")
+    
     vacancies = responses[0].get("items")
 
     if not vacancies:

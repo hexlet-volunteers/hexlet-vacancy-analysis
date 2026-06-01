@@ -1,4 +1,7 @@
+import logging
 import sqlite3
+
+logger = logging.getLogger(__name__)
 
 post_keywords = {"junior", "джун", "middle", "senior", "python", "developer"}
 company_keywords = {"компания", "яндекс", "google", "ozon", "авито"}
@@ -41,7 +44,7 @@ def classify_keyword(word):
 def insert_keyword(word, db_path="../../../../db.sqlite3"):
     field = classify_keyword(word)
     if not field:
-        print(f"Не удалось классифицировать слово: {word}")
+        logger.warning("Не удалось классифицировать слово: %s", word)
         return
 
     with sqlite3.connect(db_path) as conn:
@@ -52,7 +55,7 @@ def insert_keyword(word, db_path="../../../../db.sqlite3"):
             (word,),
         )
         conn.commit()
-        print(f"Слово '{word}' записано в поле {field}.")
+        logger.info("Слово '%s' записано в поле %s.", word, field)
 
 
 words = [

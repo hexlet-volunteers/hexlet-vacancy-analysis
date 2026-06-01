@@ -98,7 +98,10 @@ class SuperJobParserTests(TransactionTestCase):
         self.assertIsNone(parse_published_at(None))
         self.assertIsNone(parse_published_at(0))
 
-    def test_transform_superjob_data_creates_related(self):
+    @patch('app.services.superjob.superjob_parser.utils.data_transformer.get_sj_city_to_region_mapping')
+    def test_transform_superjob_data_creates_related(self, mock_region_mapping):
+        mock_region_mapping.return_value = {"Moscow": "Moscow Region"}
+        
         self.assertFalse(Platform.objects.filter(name=Platform.SUPER_JOB).exists())
         transformed = transform_superjob_data(self.sample_item)
 
@@ -111,8 +114,13 @@ class SuperJobParserTests(TransactionTestCase):
         self.assertIsInstance(transformed["city"], City)
 
         self.assertTrue(Platform.objects.filter(name=Platform.SUPER_JOB).exists())
+        
+        mock_region_mapping.assert_called_once_with(source="superjob")
 
-    def test_transform_superjob_data_missing_fields(self):
+    @patch('app.services.superjob.superjob_parser.utils.data_transformer.get_sj_city_to_region_mapping')
+    def test_transform_superjob_data_missing_fields(self, mock_region_mapping):
+        mock_region_mapping.return_value = {}
+        
         minimal_item = {
             "id": "789",
             "profession": "Junior Developer",
@@ -130,6 +138,8 @@ class SuperJobParserTests(TransactionTestCase):
         self.assertEqual(transformed["salary"], "По договоренности")
         self.assertIsNone(transformed["city"])
         self.assertIsNone(transformed["published_at"])
+        
+        mock_region_mapping.assert_called_once_with(source="superjob")
 
     @patch(
         "app.services.superjob.superjob_parser.utils.vacancy_fetcher.HTTPClient.get",

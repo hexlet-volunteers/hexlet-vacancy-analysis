@@ -31,6 +31,7 @@
     "react-hook-form": "^7.68.0",
     "react-redux": "^9.2.0",
     "react-social-icons": "^6.24.0",
+    "svg-getpointatlength": "^2.0.0",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.11",
     "yup": "^1.7.1"

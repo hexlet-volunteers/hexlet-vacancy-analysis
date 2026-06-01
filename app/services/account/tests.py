@@ -23,11 +23,10 @@ class ProfileEditViewTests(TestCase):
         self.assertEqual(data.get("component"), "ProfileEdit")
         self.assertEqual(data.get("props", {}).get("email"), self.user.email)
 
-    def test_get_inertia_unauthenticated_returns_401(self):
+    def test_get_inertia_unauthenticated_redirects_to_login(self):
         resp = self.client.get(self.url, HTTP_X_INERTIA="true")
-        self.assertEqual(resp.status_code, 401)
-        data = json.loads(resp.content)
-        self.assertEqual(data.get("status"), "error")
+        self.assertEqual(resp.status_code, 409)
+        self.assertEqual(resp["X-Inertia-Location"], reverse("login"))
 
     def test_post_inertia_validation_errors_status_422(self):
         self.client.force_login(self.user)
@@ -43,15 +42,15 @@ class ProfileEditViewTests(TestCase):
         self.assertIn("errors", props)
         self.assertIn("first_name", props["errors"])
 
-    def test_post_inertia_success_redirects_303_and_updates(self):
+    def test_post_inertia_success_redirects_and_updates(self):
         self.client.force_login(self.user)
         resp = self.client.post(
             self.url,
             {"first_name": "Ivan", "last_name": "Petrov", "next": "/welcome/"},
             HTTP_X_INERTIA="true",
         )
-        self.assertEqual(resp.status_code, 303)
-        self.assertEqual(resp["Location"], "/welcome/")
+        self.assertEqual(resp.status_code, 409)
+        self.assertEqual(resp["X-Inertia-Location"], "/welcome/")
         self.user.refresh_from_db()
         self.assertEqual(self.user.first_name, "Ivan")
         self.assertEqual(self.user.last_name, "Petrov")
@@ -62,8 +61,8 @@ class ProfileEditViewTests(TestCase):
             self.url,
             {"first_name": "Ivan", "last_name": "Petrov", "next": "https://ya.ru/"},
         )
-        self.assertEqual(resp.status_code, 303)
-        self.assertEqual(resp["Location"], reverse("account_profile_edit"))
+        self.assertEqual(resp.status_code, 409)
+        self.assertEqual(resp["X-Inertia-Location"], reverse("account_profile_edit"))
 
     def test_post_inertia_update_phone_success(self):
         self.client.force_login(self.user)
@@ -72,7 +71,8 @@ class ProfileEditViewTests(TestCase):
             {"first_name": "", "last_name": "", "phone": "8" + "9991234567"},
             HTTP_X_INERTIA="true",
         )
-        self.assertEqual(resp.status_code, 303)
+        self.assertEqual(resp.status_code, 409)
+        self.assertEqual(resp["X-Inertia-Location"], reverse("account_profile_edit"))
         self.user.refresh_from_db()
         self.assertEqual(self.user.phone, "+79991234567")
 
@@ -105,4 +105,4 @@ class ProfileEditViewTests(TestCase):
         data = json.loads(resp.content)
         props = data.get("props", {})
         self.assertIn("errors", props)
-        self.assertEqual(props["errors"].get("phone"), "Phone already in use")
+        self.assertEqual(props["errors"].get("phone"), ["Phone already in use"])
