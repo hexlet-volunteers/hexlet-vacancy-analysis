@@ -1,125 +1,166 @@
-import { Link } from '@inertiajs/react';
-import { SocialIcon } from 'react-social-icons';
-import { Send } from 'lucide-react';
-import { useSubscriptionForm } from '../../../hooks/useSubscriptionForm';
-import { TextInput, ActionIcon, Group, Text } from '@mantine/core';
+import { Link } from "@inertiajs/react";
+import {
+ Container,
+ Flex,
+ Text,
+ Stack,
+ Anchor,
+ Group,
+ Box,
+ Title,
+ Divider,
+ ThemeIcon,
+} from "@mantine/core";
+// Импортируем Heroicons (outline или solid)
+import {
+ ChatBubbleLeftRightIcon,
+ GlobeAltIcon,
+ PlayIcon,
+} from "@heroicons/react/24/outline";
+import { ArrowTrendingUpIcon } from "@heroicons/react/16/solid";
 
 const navSections = [
-  {
-    title: 'About',
-    links: [
-      { label: 'О нас', href: '/' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Partners', href: '/partners' },
-    ],
-  },
-  {
-    title: 'Support',
-    links: [
-      { label: 'FAQ', href: '/faq' },
-      { label: 'Reviews', href: '/reviews' },
-      { label: 'Contacts', href: '/contacts' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { label: 'GDPR', href: '/gdpr' },
-      { label: 'Privacy Policy', href: '/policy' },
-    ],
-  },
+ {
+  title: "Продукт",
+  links: [
+   { label: "Дашборд", href: "#" },
+   { label: "Аналитика", href: "#" },
+   { label: "Вакансии", href: "/vacancies" },
+   { label: "Карта", href: "#" },
+   { label: "Тота ИИ", href: "#" },
+  ],
+ },
+ {
+  title: "Компании",
+  links: [
+   { label: "О нас", href: "/" },
+   { label: "Для агенств", href: "/foragencies" },
+   { label: "Блог", href: "#" },
+   { label: "Отзывы", href: "#" },
+   { label: "Сообщество", href: "#" },
+  ],
+ },
+ {
+  title: "Поддержка",
+  links: [
+   { label: "Документация", href: "#" },
+   { label: "FAQ", href: "#" },
+   { label: "Техподдержка", href: "#" },
+   { label: "Тарифы", href: "#" },
+   { label: "Контакты", href: "#" },
+  ],
+ },
 ];
 
-const NavColumn = ({ title, links }: { title: string; links: { label: string; href: string }[] }) => (
-  <div className='text-left'>
-    <h3 className="text-sm font-semibold text-gray-300 tracking-wider uppercase">
-      {title}
-    </h3>
-    <ul className="mt-4 space-y-3">
-      {links.map((link) => (
-        <li key={link.label}>
-          <Link href={link.href} className="text-gray-500 hover:text-white transition-colors duration-200">
-            {link.label}
-          </Link>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
-const SubscriptionForm = () => {
-  const { email, setEmail, status, message, handleSubmit } = useSubscriptionForm();
-
-  return (
-    <div className='text-left'>
-      <Text size="sm" fw={700} className="text-gray-300 tracking-wider uppercase">
-        Subscribe
-      </Text>
-      <form onSubmit={handleSubmit} className="mt-4">
-        <Group gap="xs">
-          <TextInput
-            styles={{
-              input: {
-                backgroundColor: 'white',
-                color: '#111827',
-                borderColor: 'transparent',
-              },
-            }}
-            placeholder="Ваш e-mail"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.currentTarget.value)}
-            disabled={status === 'loading'}
-            rightSection={
-              <ActionIcon
-                type="submit"
-                size="lg"
-                color="blue"
-                variant="filled"
-                loading={status === 'loading'}
-                aria-label="Subscribe"
-              >
-                <Send size={18} />
-              </ActionIcon>
-            }
-          />
-        </Group>
-      </form>
-      {message && (
-        <Text
-          size="sm"
-          mt="xs"
-          c={status === 'success' ? 'green' : 'red'}
-        >
-          {message}
-        </Text>
-      )}
-      <div className="mt-6 flex space-x-3">
-        <SocialIcon url="https://vk.com" target="_blank" rel="noopener noreferrer" style={{ height: 24, width: 24 }} bgColor="transparent" fgColor="#a0aec0" />
-        <SocialIcon url="https://telegram.org" target="_blank" rel="noopener noreferrer" style={{ height: 24, width: 24 }} bgColor="transparent" fgColor="#a0aec0" />
-      </div>
-    </div>
-  );
-};
-
-
 const Footer = () => {
-  return (
-    <footer className="bg-gray-950 text-gray-500">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {navSections.map((section) => (
-            <NavColumn key={section.title} title={section.title} links={section.links} />
-          ))}
-          <SubscriptionForm />
-        </div>
+ const currentYear = new Date().getFullYear();
 
-        <div className="mt-10 pt-8 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center text-sm">
-          <p>© {new Date().getFullYear()} Your Company. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+ const groups = navSections.map((group) => {
+  const links = group.links.map((link, index) => (
+   <Anchor
+    key={index}
+    component={Link}
+    href={link.href}
+    c="gray.5"
+    size="sm"
+    underline="hover"
+   >
+    {link.label}
+   </Anchor>
+  ));
+
+  return (
+   <Stack key={group.title} gap="xs" miw="150px">
+    <Text fw={700} c="white" size="sm">
+     {group.title}
+    </Text>
+    {links}
+   </Stack>
   );
+ });
+
+ return (
+  <Box component="footer" bg="#001B3A" py={60}>
+   <Container size="lg">
+    <Flex
+     justify="space-between"
+     align="flex-start"
+     direction={{ base: "column", md: "row" }}
+     gap={{ base: 40, md: 50 }}
+    >
+     <Stack gap="md" flex={1}>
+      <Group gap="xs">
+       <ThemeIcon color="transparent">
+        <ArrowTrendingUpIcon color="#4ECDC4" />
+       </ThemeIcon>
+       <Title order={4} c="white" fw={700}>
+        Skill Pulse
+       </Title>
+      </Group>
+
+      <Text c="gray.5" size="sm" maw={320} lh="1.6">
+       Современная аналитика рынка IT-вакансий для принятия взвешенных карьерных
+       решений.
+      </Text>
+
+      <Group gap="md">
+       <ThemeIcon color="transparent">
+        <GlobeAltIcon color="#868e96" />
+       </ThemeIcon>
+       <ThemeIcon color="transparent">
+        <ChatBubbleLeftRightIcon color="#868e96" />
+       </ThemeIcon>
+       <ThemeIcon color="transparent">
+        <PlayIcon color="#868e96" />
+       </ThemeIcon>
+      </Group>
+     </Stack>
+
+     <Flex
+      gap={{ base: 40, sm: 60, lg: 100 }}
+      direction={{ base: "column", xs: "row" }}
+      flex={1}
+      justify={{ base: "flex-start", md: "flex-end" }}
+     >
+      {groups}
+     </Flex>
+    </Flex>
+    <Divider my={30} color="rgba(255, 255, 255, 0.1)" />
+
+    <Flex
+     justify="space-between"
+     align="center"
+     direction={{ base: "column", sm: "row" }}
+     gap="md"
+    >
+     <Text c="#868e96" size="xs">
+      © {currentYear} Skill Pulse. Все права защищены.
+     </Text>
+
+     <Group gap="xl">
+      <Anchor
+       component={Link}
+       href="#"
+       c="#868e96"
+       size="xs"
+       underline="hover"
+      >
+       Политика конфиденциальности
+      </Anchor>
+      <Anchor
+       component={Link}
+       href="#"
+       c="#868e96"
+       size="xs"
+       underline="hover"
+      >
+       Условия использования
+      </Anchor>
+     </Group>
+    </Flex>
+   </Container>
+  </Box>
+ );
 };
 
 export default Footer;

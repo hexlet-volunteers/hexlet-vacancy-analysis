@@ -30,8 +30,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
-raw_allowed_hosts = os.getenv("ALLOWED_HOSTS", "localhost")
-ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(",")]
+if DEBUG:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+else:
+    raw_allowed_hosts = os.getenv("ALLOWED_HOSTS", "localhost")
+    ALLOWED_HOSTS = [host.strip() for host in raw_allowed_hosts.split(",")]
+
+if 'test' in sys.argv or os.getenv('CI'):
+    ALLOWED_HOSTS.append('testserver')
 
 # Application definition
 
@@ -62,6 +68,7 @@ INSTALLED_APPS = [
     "app.services.pricing",
     "app.services.vacancies",
     "app.services.blog",
+    "app.services.map",
 ]
 
 AUTH_USER_MODEL = "users.User"
@@ -300,3 +307,22 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+
+# Security
+X_FRAME_OPTIONS = "DENY"
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+
+if not DEBUG and not (os.getenv('CI') or 'test' in sys.argv):
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+else:
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0

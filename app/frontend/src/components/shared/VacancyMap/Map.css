@@ -1,0 +1,131 @@
+/* === Контейнер карты === */
+.map-container {
+    position: relative;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    overflow: auto;
+}
+
+.map-svg {
+    position: relative;
+    display: block;
+    background: #f0f4f8;
+    border-radius: 8px;
+}
+
+/* === Zoom контролы === */
+.zoom-controls {
+    position: fixed;
+    z-index: 1000;
+    top: 50px;
+    left: 50px;
+    display: flex;
+    gap: 4px;
+}
+
+
+/* === Регионы карты === */
+.region {
+    fill: #050b1436;
+    stroke: #ffffff6e;
+    cursor: pointer;
+}
+
+.pointer circle,
+.region path {
+    transition: all .5s;
+}
+
+.active path,
+.active circle {
+    animation: show .5s forwards;
+    transition: all .5s;
+    opacity: 0;
+    fill: green;
+    stroke: white;
+    stroke-width: 1px;
+}
+
+
+.region:hover,
+.pointer:hover circle,
+.region:hover+.pointer circle,
+.region:has(+ .pointer:hover) path {
+    fill: green;
+    stroke: white;
+}
+
+
+@keyframes show {
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* === Указатели === */
+.pointer {
+    cursor: pointer;
+}
+
+
+.pointer-circle {
+    fill: #3b82f6;
+}
+
+
+.pointer-text {
+    fill: white;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    user-select: none;
+}
+
+/* === Tooltip === */
+.map-tooltip {
+    position: absolute;
+    z-index: 100;
+
+}
+
+
+/* === Состояния загрузки и ошибок === */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    color: #666;
+    z-index: 10;
+    animation: blink 1.2s ease-in-out infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.map-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    color: #e53e3e;
+    background: #fff5f5;
+    padding: 12px 20px;
+    border-radius: 6px;
+    z-index: 10;
+}

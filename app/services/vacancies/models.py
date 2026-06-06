@@ -1,6 +1,8 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
 
+from app.services.vacancies.managers import RegionManager
+
 
 class Platform(models.Model):
     HH = "HeadHunter"
@@ -80,7 +82,7 @@ class Vacancy(models.Model):
     region = models.CharField(
         max_length=100,
         null=True,
-        verbose_name='Регион',
+        verbose_name="Регион",
     )
     city = models.ForeignKey(
         City,
@@ -160,6 +162,8 @@ class Vacancy(models.Model):
         verbose_name="Опубликовано",
     )
 
+    regions = RegionManager()
+
     class Meta:
         verbose_name = "Вакансия"
         verbose_name_plural = "Вакансии"
@@ -178,5 +182,7 @@ class Vacancy(models.Model):
         ]
 
     def __str__(self) -> str:
-        company_name = self.company.name if self.company else "Неизвестную компанию"
+        company_name = (
+            self.company.name if self.company else "Неизвестную компанию"
+        )
         return f"{self.title} в {company_name}"
