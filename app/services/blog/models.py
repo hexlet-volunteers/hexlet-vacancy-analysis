@@ -1,8 +1,11 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
@@ -76,6 +79,13 @@ class BlogPostQuerySet(models.QuerySet):
             .prefetch_related("tags")
         )
 
+    def recommended_for(self, post, limit=3):
+        return (
+            self.for_blog_list()
+            .filter(category_id=post.category_id)
+            .exclude(pk=post.pk)[:limit]
+        )
+
 
 class BlogPost(models.Model):
     title = models.CharField(max_length=150, unique=True, verbose_name=_("Title"))
@@ -102,6 +112,12 @@ class BlogPost(models.Model):
         help_text=_("Specify the number of minutes"),
         validators=[MinValueValidator(1), MaxValueValidator(60)],
     )
+    slug = models.SlugField(
+        max_length=150,
+        unique=True,
+        db_index=True,
+        verbose_name=_("Slug"),
+    )
     objects = BlogPostQuerySet.as_manager()
 
     class Meta:
@@ -112,5 +128,27 @@ class BlogPost(models.Model):
     def __str__(self):
         return self.title
 
+    def _generate_unique_slug(self):
+        base_slug = slugify(self.title, allow_unicode=True)[:140]
+
+        if not base_slug:
+            base_slug = f"post-{uuid.uuid4().hex[:8]}"
+
+        slug = base_slug
+        counter = 1
+
+        while BlogPost.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+            suffix = f"-{counter}"
+            max_base_length = 150 - len(suffix)
+            slug = f"{base_slug[:max_base_length]}{suffix}"
+            counter += 1
+
+        return slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._generate_unique_slug()
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self):
-        return reverse("blog_detail", kwargs={"pk": self.pk})
+        return reverse("blog_detail", kwargs={"slug": self.slug})

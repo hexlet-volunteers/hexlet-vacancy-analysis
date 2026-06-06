@@ -117,7 +117,7 @@ class VacancyTest(TestCase):
         vacancy = HhVacancy.objects.get(hh_id=999)
         self.assertEqual(vacancy.title, 'Test Vacancy Update')
 
-    @patch('app.services.parser.views.HhVacancyParser')
+    @patch.object(HhVacancyParser, 'parse_vacancies')
     def test_base_vacancy_parser_success(self, mock_parser):
         mock_instance = mock_parser.return_value
         mock_instance.parse_vacancies.return_value = [self.hh_vacancy_saver]
@@ -204,7 +204,9 @@ class VacancyTest(TestCase):
     @patch('requests.Session.get')
     @patch('app.services.parser.api_parser.base_parser.os.path.exists')
     @patch('app.services.parser.api_parser.base_parser.save_data')
-    def test_get_city_to_region_mapping_fetch_hh(self, mock_save, mock_exists, mock_get):
+    def test_get_city_to_region_mapping_fetch_hh(
+      self, mock_save, mock_exists, mock_get
+        ):
         mock_exists.return_value = False
 
         mock_response = MagicMock()
