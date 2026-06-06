@@ -118,7 +118,9 @@ def extract_company(item: dict[str, Any]) -> Optional[Company]:
     return company
 
 
-def extract_city(item: dict[str, Any]) -> Optional[City]:
+def extract_city(item: Optional[dict[str, Any]]) -> Optional[City]:
+    if not item:
+        return None
     city_name = item.get("area", {}).get("name")
     if not city_name:
         return None
@@ -127,6 +129,8 @@ def extract_city(item: dict[str, Any]) -> Optional[City]:
 
 
 def extract_address(item: Optional[dict[str, Any]]) -> Optional[str]:
+    if not item:
+        return None
     address = item.get("address", {})
     if not address:
         return None

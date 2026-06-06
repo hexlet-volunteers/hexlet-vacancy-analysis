@@ -33,6 +33,7 @@ urlpatterns = [
     path("telegram/", include("app.services.telegram.telegram_channels.urls")),
     path("auth/", include("app.services.auth.users.urls")),
     path("account/", include("app.services.account.urls")),
+    path("robots.txt", views.robots_txt, name="robots_txt"),
     path("ai-assistant/", include("app.services.ai.urls")),
     path("reset-password/", redirect_mail_link, name="password_reset_redirect"),
     path("pricing/", include("app.services.pricing.urls")),
@@ -46,6 +47,7 @@ urlpatterns = [
     path("parser/", include("app.services.parser.urls")),
     path("vacancies/", include("app.services.vacancies.urls")),
     path("blog/", include("app.services.blog.urls")),
+    path("map/", include("app.services.map.urls")),
 ]
 
 handler500 = views.custom_server_error

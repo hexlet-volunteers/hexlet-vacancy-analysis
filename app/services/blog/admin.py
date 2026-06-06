@@ -8,6 +8,7 @@ class BlogPostAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "title",
+        "slug",
         "author",
         "category",
         "created_at",
@@ -15,7 +16,8 @@ class BlogPostAdmin(admin.ModelAdmin):
         "get_tags",
     )
     list_filter = ("author", "category", "tags")
-    search_fields = ("title",)
+    search_fields = ("title", "slug")
+    prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")
 
     def get_queryset(self, request):

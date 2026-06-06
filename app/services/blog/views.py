@@ -59,10 +59,11 @@ class BlogListView(View):
 
 
 class BlogDetailView(View):
-    def get(self, request: HttpRequest, pk: int) -> InertiaResponse:
-        post = get_object_or_404(BlogPost.objects.for_blog_detail(), pk=pk)
+    def get(self, request: HttpRequest, slug: str) -> InertiaResponse:
+        post = get_object_or_404(BlogPost.objects.for_blog_detail(), slug=slug)
         post_data = {
             "id": post.id,
+            "slug": post.slug,
             "title": post.title,
             "content_full": post.content_full,
             "created_at": post.created_at,
@@ -71,4 +72,28 @@ class BlogDetailView(View):
             "author": post.author.first_name,
             "tags": [tag.name for tag in post.tags.all()],
         }
-        return inertia_render(request, "BlogPost", props={"post": post_data})
+
+        recommended_posts = BlogPost.objects.recommended_for(post)
+
+        recommended_posts_data = [
+            {
+                "id": rec_post.id,
+                "slug": rec_post.slug,
+                "title": rec_post.title,
+                "content_short": rec_post.content_short,
+                "category": rec_post.category.name,
+                "author": rec_post.author.first_name,
+                "created_at": rec_post.created_at,
+                "duration_minutes": rec_post.duration_minutes,
+            }
+            for rec_post in recommended_posts
+        ]
+
+        return inertia_render(
+            request,
+            "BlogPostPage",
+            props={
+                "post": post_data,
+                "recommended_posts": recommended_posts_data,
+            },
+        )

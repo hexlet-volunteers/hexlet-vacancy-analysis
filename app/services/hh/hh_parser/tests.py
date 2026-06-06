@@ -7,7 +7,8 @@ from django.test import TransactionTestCase
 from django.utils import timezone
 
 from app.services.hh.hh_parser.utils.data_transformer import (
-    extract_city_and_address,
+    extract_address,
+    extract_city,
     extract_company,
     extract_plain_text,
     format_list,
@@ -24,20 +25,21 @@ from app.services.hh.hh_parser.views import hh_vacancy_parse
 from app.services.vacancies.models import City, Company, Platform, Vacancy
 
 
-class HhParserTests(TransactionTestCase):
+class HHParserTests(TransactionTestCase):
     def setUp(self):
         self.sample_item = {
             "id": "123",
             "name": "Test Vacancy",
             "salary": {"from": 100000, "to": 200000, "currency": "RUB"},
             "alternate_url": "https://hh.ru/vacancy/123",
+            "area": {"name": "Moscow"},
+            "address": {"city": "Moscow", "raw": "Moscow, Red Square"},
             "experience": {"name": "3-5 years"},
             "schedule": {"name": "full day"},
             "work_format": [{"name": "remote"}],
             "key_skills": [{"name": "Python"}],
             "education": {"level": {"name": "Bachelor"}},
             "description": "<p>Hello</p>",
-            "address": {"city": "Moscow", "raw": "Moscow, Red Square"},
             "employment": {"name": "full-time"},
             "contacts": "email@example.com",
             "published_at": timezone.now(),
@@ -81,21 +83,27 @@ class HhParserTests(TransactionTestCase):
         self.assertEqual(safe_nested_get(data, "a", "b", "c"), 1)
         self.assertIsNone(safe_nested_get(None, "a"))
 
-    def test_extract_company_and_city_and_address(self):
+    def test_extract_company_city_address(self):
         comp = extract_company({"employer": {"name": "Hexlet"}})
         self.assertIsInstance(comp, Company)
         self.assertEqual(comp.name, "Hexlet")
 
         self.assertIsNone(extract_company({}))
 
-        city_obj, addr = extract_city_and_address({"city": "Spb", "raw": "St"})
+        city_obj = extract_city({"area": {"name": "Moscow"}})
         self.assertIsInstance(city_obj, City)
-        self.assertEqual(city_obj.name, "Spb")
-        self.assertEqual(addr, "St")
+        self.assertEqual(city_obj.name, "Moscow")
 
-        self.assertEqual(extract_city_and_address(None), (None, None))
+        addr = extract_address({"address": {"raw": "Moscow, Red Square"}})
+        self.assertEqual(addr, "Moscow, Red Square")
 
-    def test_transform_hh_data_creates_related(self):
+        self.assertIsNone(extract_city(None))
+        self.assertIsNone(extract_address(None))
+
+    @patch('app.services.hh.hh_parser.utils.data_transformer.get_hh_city_to_region_mapping')
+    def test_transform_hh_data_creates_related(self, mock_region_mapping):
+        mock_region_mapping.return_value = {"Moscow": "Moscow Region"}
+        
         self.assertFalse(Platform.objects.filter(name=Platform.HH).exists())
         transformed = transform_hh_data(self.sample_item)
         self.assertEqual(transformed["title"], "Test Vacancy")
@@ -106,6 +114,8 @@ class HhParserTests(TransactionTestCase):
         self.assertIsInstance(transformed["city"], City)
 
         self.assertTrue(Platform.objects.filter(name=Platform.HH).exists())
+        
+        mock_region_mapping.assert_called_once_with(source="hh")
 
     @patch(
         "app.services.hh.hh_parser.utils.vacancy_fetcher.HTTPClient.get",
