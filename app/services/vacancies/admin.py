@@ -36,6 +36,7 @@ class VacancyAdmin(admin.ModelAdmin):
         "title",
         "company",
         "region",
+        "region_code",
         "city",
         "address",
         "url",
@@ -70,7 +71,7 @@ class VacancyAdmin(admin.ModelAdmin):
             },
         ),
         ("Location", {"fields": (
-            "region", "city", "address"),
+            "region", "region_code", "city", "address"),
             "classes": ("collapse",)}),
         (
             "Additional information",

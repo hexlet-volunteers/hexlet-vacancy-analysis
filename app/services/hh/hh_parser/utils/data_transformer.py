@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from app.services.vacancies.models import City, Company, Platform
 
-from .regions_parser import get_hh_city_to_region_mapping
+from .hh_regions_parser import REGION_NAME_TO_CODE, get_hh_city_to_region_mapping
 
 logger = logging.getLogger(__name__)
 
@@ -87,11 +87,14 @@ def transform_hh_data(item: dict[str, Any]) -> dict[str, Any]:
     city = extract_city(item)
     full_address = extract_address(item)
     region = get_hh_city_to_region_mapping(source="hh")
+    region_name = region.get(str(city), 'Регион не найден')
+    region_code = REGION_NAME_TO_CODE.get(region_name, 'Код региона не найден')
 
     return {
         "platform": platform,
         "company": company,
-        "region": region.get(str(city), 'Регион не найден'),
+        "region": region_name,
+        "region_code": region_code,
         "city": city,
         "platform_vacancy_id": f"{Platform.HH}{item.get('id')}",
         "title": item.get("name"),

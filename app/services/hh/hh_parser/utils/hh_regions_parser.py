@@ -3,10 +3,12 @@ import os
 import requests
 
 from app.parser import get_fixture_data, save_data
+from app.services.regions.models import Region
 
 CACHE_FILE = os.path.join('app', 'services', 'hh', 'hh_parser',
                           'utils', 'hh_city_region_mapping.json'
                           )
+REGION_NAME_TO_CODE = {r.name: r.code for r in Region.objects.all()}
 
 
 def get_hh_city_to_region_mapping(source='hh') -> dict[str, str]:

@@ -27,13 +27,14 @@ def get_sj_city_to_region_mapping(source='superjob') -> dict[str, str]:
 
     mapping = parse_superjob_areas(areas)
     save_data(CACHE_FILE, mapping)
+
     return mapping
 
 
 def parse_superjob_areas(areas: list) -> dict[str, str]:
     mapping = {}
     for country in areas:
-        for city in country['towns']:
+        for city in country.get('towns', []):
             mapping[city['title']] = city['title']
         for region in country.get('regions', []):
             region_name = region['title']

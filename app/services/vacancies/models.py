@@ -84,6 +84,11 @@ class Vacancy(models.Model):
         null=True,
         verbose_name="Регион",
     )
+    region_code = models.CharField(
+        max_length=3,
+        null=True,
+        verbose_name='Код региона',
+    )
     city = models.ForeignKey(
         City,
         related_name="vacancies",

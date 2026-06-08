@@ -8,6 +8,7 @@ from app.services.hh.hh_parser.utils.data_transformer import (
     format_salary,
     safe_nested_get,
 )
+from app.services.hh.hh_parser.utils.hh_regions_parser import REGION_NAME_TO_CODE
 from app.services.vacancies.models import City, Company, Platform
 
 from .regions_parser import get_sj_city_to_region_mapping
@@ -18,6 +19,8 @@ def transform_superjob_data(item: dict[str, Any]) -> dict[str, Any]:
     company = extract_company(item)
     city = extract_city(item.get("town"))
     region = get_sj_city_to_region_mapping(source="superjob")
+    region_name = region.get(str(city), 'Регион не найден')
+    region_code = REGION_NAME_TO_CODE.get(region_name, 'Код региона не найден')
     salary = format_salary(
         {
             "from": item.get("payment_from"),
@@ -28,7 +31,8 @@ def transform_superjob_data(item: dict[str, Any]) -> dict[str, Any]:
     return {
         "platform": platform,
         "company": company,
-        "region": region.get(str(city), 'Регион не найден'),
+        "region": region_name,
+        "region_code": region_code,
         "city": city,
         "platform_vacancy_id": f"{Platform.SUPER_JOB}{item.get('id')}",
         "title": item.get("profession"),

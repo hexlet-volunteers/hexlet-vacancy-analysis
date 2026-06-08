@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     "app.services.pricing",
     "app.services.vacancies",
     "app.services.blog",
+    "app.services.regions",
     "app.services.map",
 ]
 

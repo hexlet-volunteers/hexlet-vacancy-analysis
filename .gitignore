@@ -33,6 +33,7 @@ coverage.xml
 db.sqlite3
 postgres/
 sqlite3
+*.sqlite3
 
 # Build & Static Files
 staticfiles/
