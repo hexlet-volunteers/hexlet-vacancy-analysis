@@ -12,9 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 import os
 import sys
-from dotenv import load_dotenv
 from pathlib import Path
-import dj_database_url
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -120,19 +120,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-#
-# DATABASE_URL = os.getenv('DATABASE_URL')
-# if DATABASE_URL:
-#     DATABASES['default'] = dj_database_url.config(
-#         default=DATABASE_URL, conn_max_age=600
-#     )
-
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
@@ -213,7 +200,7 @@ GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID", "")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET", "")
 GITHUB_REDIRECT_URI = os.getenv("GITHUB_REDIRECT_URI", "")
 
-## django-vite settings
+# django-vite settings
 # use HMR or not.
 DJANGO_VITE_DEV_MODE = DEBUG
 
@@ -229,7 +216,7 @@ DJANGO_VITE_DEV_SERVER_PORT = 5173
 
 DJANGO_VITE_MANIFEST_PATH = os.path.join(STATIC_ROOT, "manifest.json")
 
-## Inertia settings
+# Inertia settings
 INERTIA_LAYOUT = BASE_DIR / "app" / "templates" / "index.html"
 CSRF_HEADER_NAME = "HTTP_X_XSRF_TOKEN"
 CSRF_COOKIE_NAME = "XSRF-TOKEN"
