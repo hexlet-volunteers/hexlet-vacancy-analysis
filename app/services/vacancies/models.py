@@ -162,6 +162,7 @@ class Vacancy(models.Model):
         verbose_name="Опубликовано",
     )
 
+    objects = models.Manager()
     regions = RegionManager()
 
     class Meta:
@@ -182,7 +183,5 @@ class Vacancy(models.Model):
         ]
 
     def __str__(self) -> str:
-        company_name = (
-            self.company.name if self.company else "Неизвестную компанию"
-        )
+        company_name = self.company.name if self.company else "Неизвестную компанию"
         return f"{self.title} в {company_name}"
