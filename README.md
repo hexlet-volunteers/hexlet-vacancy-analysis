@@ -101,5 +101,4 @@ To get your SUPERJOB_API_KEY, follow the link https://api.superjob.ru/ and look 
 
 
 ## Comments
-.
- 
+
