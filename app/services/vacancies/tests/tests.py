@@ -21,9 +21,7 @@ class VacanciesTests(TransactionTestCase):
         VacancyFactory.create_batch(
             2,
             title=factory.Iterator(["Python Developer", "Java Engineer"]),
-            city=factory.Iterator(
-                [CityFactory(name="Moscow"), CityFactory(name="SPB")]
-            ),
+            city=factory.Iterator([CityFactory(name="Moscow"), CityFactory(name="SPB")]),
             company=factory.Iterator(
                 [CompanyFactory(name="Hexlet"), CompanyFactory(name="Google")]
             ),
@@ -52,7 +50,7 @@ class VacanciesTests(TransactionTestCase):
         view = VacancyListView()
         response = await view.get(request)
 
-        self.assertIn(response, "Mocked Inertia Response")
+        self.assertEqual(response, "Mocked Inertia Response")
 
     def test_vacancy_titles(self):
         titles = [v.title for v in Vacancy.objects.all()]
